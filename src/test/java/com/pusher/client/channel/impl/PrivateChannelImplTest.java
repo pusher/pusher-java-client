@@ -91,9 +91,9 @@ public class PrivateChannelImplTest extends ChannelImplTest {
                 "{" + AUTH_RESPONSE + "," + AUTH_RESPONSE_CHANNEL_DATA + "}");
 
         assertEquals("{\"event\":\"pusher:subscribe\",\"data\":{"
+                + AUTH_RESPONSE_CHANNEL_DATA + ","
                 + AUTH_RESPONSE
-                + ",\"channel\":\"" + getChannelName() + "\","
-                + AUTH_RESPONSE_CHANNEL_DATA + "}}",
+                + ",\"channel\":\"" + getChannelName() + "\"" + "}}",
                 channel.getSubscribeMessage());
     }
 

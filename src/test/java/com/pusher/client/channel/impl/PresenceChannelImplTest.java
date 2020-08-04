@@ -54,9 +54,9 @@ public class PresenceChannelImplTest extends PrivateChannelImplTest {
     public void testReturnsCorrectSubscribeMessage() {
         final String message = channel.getSubscribeMessage();
         assertEquals("{\"event\":\"pusher:subscribe\",\"data\":{"
+                + AUTH_RESPONSE_CHANNEL_DATA + ","
                 + AUTH_RESPONSE
-                + ",\"channel\":\"" + getChannelName() + "\","
-                + AUTH_RESPONSE_CHANNEL_DATA+ "}}",
+                + ",\"channel\":\"" + getChannelName() + "\"" + "}}",
                 message);
     }
 
@@ -67,9 +67,9 @@ public class PresenceChannelImplTest extends PrivateChannelImplTest {
 
         final String message = channel.getSubscribeMessage();
         assertEquals("{\"event\":\"pusher:subscribe\",\"data\":{"
+                + AUTH_RESPONSE_NUMERIC_ID_CHANNEL_DATA + ","
                 + AUTH_RESPONSE_NUMERIC_ID
-                + ",\"channel\":\"" + getChannelName() + "\","
-                + AUTH_RESPONSE_NUMERIC_ID_CHANNEL_DATA+ "}}",
+                + ",\"channel\":\"" + getChannelName() + "\""  + "}}",
                 message);
     }
 
