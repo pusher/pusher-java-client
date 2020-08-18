@@ -63,16 +63,16 @@ public class ChannelManagerTest {
             }
         }).when(factory).queueOnEventThread(any(Runnable.class));
         when(mockInternalChannel.getName()).thenReturn(CHANNEL_NAME);
-        when(mockInternalChannel.toSubscribeMessage()).thenReturn(OUTGOING_SUBSCRIBE_MESSAGE);
-        when(mockInternalChannel.toUnsubscribeMessage()).thenReturn(OUTGOING_UNSUBSCRIBE_MESSAGE);
+        when(mockInternalChannel.getSubscribeMessage()).thenReturn(OUTGOING_SUBSCRIBE_MESSAGE);
+        when(mockInternalChannel.getUnsubscribeMessage()).thenReturn(OUTGOING_UNSUBSCRIBE_MESSAGE);
         when(mockInternalChannel.getEventListener()).thenReturn(mockEventListener);
         when(mockConnection.getSocketId()).thenReturn(SOCKET_ID);
         when(mockConnection.getState()).thenReturn(ConnectionState.CONNECTED);
         when(mockPrivateChannel.getName()).thenReturn(PRIVATE_CHANNEL_NAME);
-        when(mockPrivateChannel.toSubscribeMessage()).thenReturn(PRIVATE_OUTGOING_SUBSCRIBE_MESSAGE);
+        when(mockPrivateChannel.getSubscribeMessage()).thenReturn(PRIVATE_OUTGOING_SUBSCRIBE_MESSAGE);
         when(mockPrivateChannel.getEventListener()).thenReturn(mockPrivateChannelEventListener);
         when(mockPresenceChannel.getName()).thenReturn(PRESENCE_CHANNEL_NAME);
-        when(mockPresenceChannel.toSubscribeMessage()).thenReturn(PRIVATE_OUTGOING_SUBSCRIBE_MESSAGE);
+        when(mockPresenceChannel.getSubscribeMessage()).thenReturn(PRIVATE_OUTGOING_SUBSCRIBE_MESSAGE);
         when(mockPresenceChannel.getEventListener()).thenReturn(mockPresenceChannelEventListener);
 
         channelManager = new ChannelManager(factory);
@@ -165,7 +165,7 @@ public class ChannelManagerTest {
     public void testSubscribeToPrivateChannelSubscribes() throws AuthorizationFailureException {
         channelManager.subscribeTo(mockPrivateChannel, mockPrivateChannelEventListener);
 
-        verify(mockPrivateChannel).toSubscribeMessage();
+        verify(mockPrivateChannel).getSubscribeMessage();
         verify(mockConnection).sendMessage(PRIVATE_OUTGOING_SUBSCRIBE_MESSAGE);
     }
 
@@ -187,7 +187,7 @@ public class ChannelManagerTest {
         final AuthorizationFailureException exception = new AuthorizationFailureException(
                 "Unable to contact auth server");
         when(mockConnection.getState()).thenReturn(ConnectionState.DISCONNECTED);
-        when(mockPrivateChannel.toSubscribeMessage()).thenThrow(exception);
+        when(mockPrivateChannel.getSubscribeMessage()).thenThrow(exception);
 
         channelManager.subscribeTo(mockPrivateChannel, mockPrivateChannelEventListener);
         verify(mockConnection, never()).sendMessage(anyString());

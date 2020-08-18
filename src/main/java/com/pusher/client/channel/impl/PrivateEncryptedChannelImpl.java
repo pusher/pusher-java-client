@@ -1,5 +1,6 @@
 package com.pusher.client.channel.impl;
 
+import com.google.gson.JsonSyntaxException;
 import com.pusher.client.AuthorizationFailureException;
 import com.pusher.client.Authorizer;
 import com.pusher.client.channel.ChannelState;
@@ -7,6 +8,9 @@ import com.pusher.client.channel.PrivateEncryptedChannel;
 import com.pusher.client.channel.PrivateEncryptedChannelEventListener;
 import com.pusher.client.channel.PusherEvent;
 import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.channel.impl.message.AuthResponse;
+import com.pusher.client.channel.impl.message.EncryptedReceivedData;
+import com.pusher.client.channel.impl.message.SubscribeMessage;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
@@ -17,7 +21,6 @@ import com.pusher.client.crypto.nacl.SecretBoxOpenerFactory;
 import com.pusher.client.util.Factory;
 import com.pusher.client.util.internal.Base64;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,42 +72,25 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
     }
 
     @Override
-    public String toSubscribeMessage() {
-        String authKey = authenticate();
+    public String getSubscribeMessage() {
 
-        // create the data part
-        final Map<Object, Object> dataMap = new LinkedHashMap<>();
-        dataMap.put("channel", name);
-        dataMap.put("auth", authKey);
-
-        // create the wrapper part
-        final Map<Object, Object> jsonObject = new LinkedHashMap<>();
-        jsonObject.put("event", "pusher:subscribe");
-        jsonObject.put("data", dataMap);
-
-        return GSON.toJson(jsonObject);
+        return GSON.toJson(new SubscribeMessage(name, authenticate(), null));
     }
 
     private String authenticate() {
         try {
-            @SuppressWarnings("rawtypes") // anything goes in JS
-            final Map authResponse = GSON.fromJson(getAuthResponse(), Map.class);
-
-            final String auth = (String) authResponse.get("auth");
-            final String sharedSecret = (String) authResponse.get("shared_secret");
-
-            if (auth == null || sharedSecret == null) {
+            final AuthResponse authResponse = GSON.fromJson(getAuthResponse(), AuthResponse.class);
+            if (authResponse.getAuth() == null
+                    || authResponse.getSharedSecret() == null) {
                 throw new AuthorizationFailureException("Didn't receive all the fields expected " +
                         "from the Authorizer, expected an auth and shared_secret.");
             } else {
-                createSecretBoxOpener(Base64.decode(sharedSecret));
-                return auth;
+                createSecretBoxOpener(Base64.decode(authResponse.getSharedSecret()));
+                return authResponse.getAuth();
             }
-        } catch (final AuthorizationFailureException e) {
-            throw e; // pass this upwards
-        } catch (final Exception e) {
-            // any other errors need to be captured properly and passed upwards
-            throw new AuthorizationFailureException("Unable to parse response from Authorizer", e);
+
+        } catch (JsonSyntaxException e) {
+            throw new AuthorizationFailureException("Unable to parse response from Authorizer");
         }
     }
 
@@ -157,19 +143,6 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
                 ((PrivateEncryptedChannelEventListener)listener).onDecryptionFailure(
                         event, reason);
             }
-        }
-    }
-
-    private class EncryptedReceivedData {
-        String nonce;
-        String ciphertext;
-
-        public byte[] getNonce() {
-            return Base64.decode(nonce);
-        }
-
-        public byte[] getCiphertext() {
-            return Base64.decode(ciphertext);
         }
     }
 

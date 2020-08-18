@@ -146,7 +146,7 @@ public class ChannelManager implements ConnectionEventListener {
 
                 if (connection.getState() == ConnectionState.CONNECTED) {
                     try {
-                        final String message = channel.toSubscribeMessage();
+                        final String message = channel.getSubscribeMessage();
                         connection.sendMessage(message);
                         channel.updateState(ChannelState.SUBSCRIBE_SENT);
                     } catch (final AuthorizationFailureException e) {
@@ -161,7 +161,7 @@ public class ChannelManager implements ConnectionEventListener {
         factory.queueOnEventThread(new Runnable() {
             @Override
             public void run() {
-                connection.sendMessage(channel.toUnsubscribeMessage());
+                connection.sendMessage(channel.getUnsubscribeMessage());
                 channel.updateState(ChannelState.UNSUBSCRIBED);
             }
         });

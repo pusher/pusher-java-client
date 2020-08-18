@@ -40,8 +40,7 @@ public class EndToEndTest {
     private static final String AUTH_KEY = "123456";
     private static final String PUBLIC_CHANNEL_NAME = "my-channel";
     private static final String PRIVATE_CHANNEL_NAME = "private-my-channel";
-    private static final String OUTGOING_SUBSCRIBE_PRIVATE_MESSAGE = "{\"event\":\"pusher:subscribe\",\"data\":{\"channel\":\""
-            + PRIVATE_CHANNEL_NAME + "\",\"auth\":\"" + AUTH_KEY + "\"}}";
+    private static final String OUTGOING_SUBSCRIBE_PRIVATE_MESSAGE = "{\"event\":\"pusher:subscribe\",\"data\":{\"auth\":\"" + AUTH_KEY + "\",\"channel\":\"" + PRIVATE_CHANNEL_NAME + "\"}}";
     private static final long ACTIVITY_TIMEOUT = 120000;
     private static final long PONG_TIMEOUT = 120000;
 

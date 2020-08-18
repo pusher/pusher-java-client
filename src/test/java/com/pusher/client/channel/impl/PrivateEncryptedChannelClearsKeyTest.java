@@ -50,7 +50,7 @@ public class PrivateEncryptedChannelClearsKeyTest {
 
     @Test
     public void secretBoxOpenerIsClearedOnUnsubscribed() {
-        subject.toSubscribeMessage();
+        subject.getSubscribeMessage();
 
         subject.updateState(ChannelState.UNSUBSCRIBED);
 
@@ -67,7 +67,7 @@ public class PrivateEncryptedChannelClearsKeyTest {
             ));
             return null;
         }).when(mockInternalConnection).bind(eq(ConnectionState.DISCONNECTED), any());
-        subject.toSubscribeMessage();
+        subject.getSubscribeMessage();
 
         verify(mockSecretBoxOpener).clearKey();
     }
@@ -85,7 +85,7 @@ public class PrivateEncryptedChannelClearsKeyTest {
 
             return null;
         }).when(mockInternalConnection).bind(eq(ConnectionState.DISCONNECTED), any());
-        subject.toSubscribeMessage();
+        subject.getSubscribeMessage();
 
         verify(mockSecretBoxOpener).clearKey();
     }

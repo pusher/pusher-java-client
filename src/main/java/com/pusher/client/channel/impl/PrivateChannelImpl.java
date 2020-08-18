@@ -1,8 +1,5 @@
 package com.pusher.client.channel.impl;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -12,6 +9,9 @@ import com.pusher.client.channel.ChannelState;
 import com.pusher.client.channel.PrivateChannel;
 import com.pusher.client.channel.PrivateChannelEventListener;
 import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.channel.impl.message.AuthResponse;
+import com.pusher.client.channel.impl.message.SubscribeMessage;
+import com.pusher.client.channel.impl.message.TriggerMessage;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.impl.InternalConnection;
 import com.pusher.client.util.Factory;
@@ -35,7 +35,6 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
     /* PrivateChannel implementation */
 
     @Override
-    @SuppressWarnings("rawtypes")
     public void trigger(final String eventName, final String data) {
 
         if (eventName == null || !eventName.startsWith(CLIENT_EVENT_PREFIX)) {
@@ -53,21 +52,9 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
                     + connection.getState().toString() + " state");
         }
 
-        try {
-
-            final Map<Object, Object> jsonPayload = new LinkedHashMap<Object, Object>();
-            jsonPayload.put("event", eventName);
-            jsonPayload.put("channel", name);
-            jsonPayload.put("data", data);
-
-            final String jsonMessage = GSON.toJson(jsonPayload);
-            connection.sendMessage(jsonMessage);
-
-        }
-        catch (final JsonSyntaxException e) {
-            throw new IllegalArgumentException("Cannot trigger event " + eventName + " because \"" + data
-                    + "\" could not be parsed as valid JSON");
-        }
+        connection.sendMessage(
+                GSON.toJson(
+                        new TriggerMessage(eventName, name, data)));
     }
 
     /* Base class overrides */
@@ -75,7 +62,7 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
     @Override
     public void bind(final String eventName, final SubscriptionEventListener listener) {
 
-        if (listener instanceof PrivateChannelEventListener == false) {
+        if (!(listener instanceof PrivateChannelEventListener)) {
             throw new IllegalArgumentException(
                     "Only instances of PrivateChannelEventListener can be bound to a private channel");
         }
@@ -83,35 +70,26 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
         super.bind(eventName, listener);
     }
 
-    @Override
-    @SuppressWarnings("rawtypes")
-    public String toSubscribeMessage() {
-
-        final String authResponse = getAuthResponse();
-
+    private String authenticate() {
         try {
-            final Map authResponseMap = GSON.fromJson(authResponse, Map.class);
-            final String authKey = (String)authResponseMap.get("auth");
-            channelData = (String)authResponseMap.get("channel_data");
+            final AuthResponse authResponse = GSON.fromJson(getAuthResponse(), AuthResponse.class);
+            channelData = (String) authResponse.getChannelData();
 
-            final Map<Object, Object> jsonObject = new LinkedHashMap<Object, Object>();
-            jsonObject.put("event", "pusher:subscribe");
-
-            final Map<Object, Object> dataMap = new LinkedHashMap<Object, Object>();
-            dataMap.put("channel", name);
-            dataMap.put("auth", authKey);
-            if (channelData != null) {
-                dataMap.put("channel_data", channelData);
+            if (authResponse.getAuth() == null) {
+                throw new AuthorizationFailureException("Didn't receive all the fields expected " +
+                        "from the Authorizer, expected an auth and shared_secret.");
+            } else {
+                return authResponse.getAuth();
             }
-
-            jsonObject.put("data", dataMap);
-
-            final String json = GSON.toJson(jsonObject);
-            return json;
+        }  catch (JsonSyntaxException e) {
+            throw new AuthorizationFailureException("Unable to parse response from Authorizer");
         }
-        catch (final Exception e) {
-            throw new AuthorizationFailureException("Unable to parse response from Authorizer: " + authResponse, e);
-        }
+    }
+
+    @Override
+    public String getSubscribeMessage() {
+        return GSON.toJson(
+                new SubscribeMessage(name, authenticate(), channelData));
     }
 
     @Override

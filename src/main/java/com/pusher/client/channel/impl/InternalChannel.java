@@ -7,9 +7,9 @@ import com.pusher.client.channel.PusherEvent;
 
 public interface InternalChannel extends Channel, Comparable<InternalChannel> {
 
-    String toSubscribeMessage();
+    String getSubscribeMessage();
 
-    String toUnsubscribeMessage();
+    String getUnsubscribeMessage();
 
     PusherEvent prepareEvent(String event, String message);
 
