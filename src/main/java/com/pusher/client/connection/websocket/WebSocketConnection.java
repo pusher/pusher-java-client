@@ -244,7 +244,7 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
     /* WebSocketListener implementation */
 
     @Override
-    public void onOpen(final ServerHandshake handshakedata) {
+    public void onOpen(final ServerHandshake handshakeData) {
         // TODO: log the handshake data
     }
 
@@ -283,13 +283,13 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
             }
             else{
                 updateState(ConnectionState.DISCONNECTING);
-                cancelTimeoutsAndTransitonToDisconnected();
+                cancelTimeoutsAndTransitionToDisconnected();
             }
             return;
         }
 
         if (state == ConnectionState.DISCONNECTING){
-            cancelTimeoutsAndTransitonToDisconnected();
+            cancelTimeoutsAndTransitionToDisconnected();
         }
     }
 
@@ -313,7 +313,7 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
         return code < 4000 || code >= 4100;
     }
 
-    private void cancelTimeoutsAndTransitonToDisconnected() {
+    private void cancelTimeoutsAndTransitionToDisconnected() {
         activityTimer.cancelTimeouts();
 
         factory.queueOnEventThread(new Runnable() {

@@ -58,14 +58,14 @@ public class EndToEndTest {
 
     @Before
     public void setUp() throws Exception {
-        pusherOptions = new PusherOptions().setAuthorizer(mockAuthorizer).setEncrypted(false);
+        pusherOptions = new PusherOptions().setAuthorizer(mockAuthorizer).setUseTLS(false);
 
         connection = new WebSocketConnection(pusherOptions.buildUrl(API_KEY), ACTIVITY_TIMEOUT, PONG_TIMEOUT, pusherOptions.getMaxReconnectionAttempts(),
                 pusherOptions.getMaxReconnectGapInSeconds(), proxy, factory);
 
         doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 final Runnable r = (Runnable) invocation.getArguments()[0];
                 r.run();
                 return null;
@@ -89,7 +89,7 @@ public class EndToEndTest {
 
         when(factory.getChannelManager()).thenAnswer(new Answer<ChannelManager>() {
             @Override
-            public ChannelManager answer(final InvocationOnMock invocation) throws Throwable {
+            public ChannelManager answer(final InvocationOnMock invocation) {
                 return new ChannelManager(factory);
             }
         });

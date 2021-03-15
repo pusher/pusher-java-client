@@ -1,6 +1,5 @@
 package com.pusher.client.channel.impl;
 
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.Before;
@@ -56,7 +55,7 @@ public class ChannelManagerTest {
 
         doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 final Runnable r = (Runnable) invocation.getArguments()[0];
                 r.run();
                 return null;
@@ -81,7 +80,7 @@ public class ChannelManagerTest {
 
         doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 final Runnable r = (Runnable) invocation.getArguments()[0];
                 r.run();
                 return null;

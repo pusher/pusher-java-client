@@ -20,9 +20,8 @@ public class SimpleWebSocket extends WebSocketClient {
     }
 
     @Override
-    public void onOpen(final ServerHandshake handshakedata) {
+    public void onOpen(final ServerHandshake handshakeData) {
         System.out.println("onOpen");
-
     }
 
     @Override

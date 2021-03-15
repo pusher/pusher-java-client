@@ -75,7 +75,7 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
     @Override
     public void bind(final String eventName, final SubscriptionEventListener listener) {
 
-        if (listener instanceof PresenceChannelEventListener == false) {
+        if (!(listener instanceof PresenceChannelEventListener)) {
             throw new IllegalArgumentException(
                     "Only instances of PresenceChannelEventListener can be bound to a presence channel");
         }
@@ -93,7 +93,6 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
         return String.format("[Presence Channel: name=%s]", name);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void handleSubscriptionSuccessfulMessage(final String message) {
 
         // extract data from the JSON message
@@ -116,7 +115,6 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private void handleMemberAddedEvent(final String message) {
         final String dataString = extractDataStringFrom(message);
         MemberData memberData = GSON.fromJson(dataString, MemberData.class);
@@ -135,7 +133,6 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private void handleMemberRemovedEvent(final String message) {
 
         final String dataString = extractDataStringFrom(message);
@@ -156,7 +153,6 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
         return  (String) jsonObject.get("data");
     }
 
-    @SuppressWarnings("rawtypes")
     private static PresenceData extractPresenceDataFrom(final String message) {
         final String dataString = extractDataStringFrom(message);
         return GSON.fromJson(dataString, Presence.class).presence;

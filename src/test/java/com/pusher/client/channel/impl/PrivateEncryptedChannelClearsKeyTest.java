@@ -1,6 +1,5 @@
 package com.pusher.client.channel.impl;
 
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import com.pusher.client.Authorizer;

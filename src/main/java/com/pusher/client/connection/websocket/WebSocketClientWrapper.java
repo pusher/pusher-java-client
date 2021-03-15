@@ -56,9 +56,9 @@ public class WebSocketClientWrapper extends WebSocketClient {
     }
 
     @Override
-    public void onOpen(final ServerHandshake handshakedata) {
+    public void onOpen(final ServerHandshake handshakeData) {
         if (webSocketListener != null) {
-            webSocketListener.onOpen(handshakedata);
+            webSocketListener.onOpen(handshakeData);
         }
     }
 
