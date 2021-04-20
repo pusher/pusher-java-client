@@ -150,7 +150,7 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
     /* implementation detail */
 
     private void updateState(final ConnectionState newState) {
-        log.fine("State transition requested, current [" + state + "], new [" + newState + "]");
+        log.info("State transition requested, current [" + state + "], new [" + newState + "]");
 
         final ConnectionStateChange change = new ConnectionStateChange(state, newState);
         state = newState;
@@ -368,7 +368,7 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
             pingTimer = factory.getTimers().schedule(new Runnable() {
                 @Override
                 public void run() {
-                    log.fine("Sending ping");
+                    log.info("Sending ping");
                     sendMessage(PING_EVENT_SERIALIZED);
                     schedulePongCheck();
                 }
@@ -399,7 +399,7 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
             pongTimer = factory.getTimers().schedule(new Runnable() {
                 @Override
                 public void run() {
-                    log.fine("Timed out awaiting pong from server - disconnecting");
+                    log.info("Timed out awaiting pong from server - disconnecting");
 
                     underlyingConnection.removeWebSocketListener();
 

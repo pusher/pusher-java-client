@@ -21,7 +21,7 @@ public class ConnectionStateChange {
     public ConnectionStateChange(final ConnectionState previousState, final ConnectionState currentState) {
 
         if (previousState == currentState) {
-        log.fine("Attempted to create an connection state update where both previous and current state are: "
+        log.info("Attempted to create an connection state update where both previous and current state are: "
              + currentState);
         }
 
