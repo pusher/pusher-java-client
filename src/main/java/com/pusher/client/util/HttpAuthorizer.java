@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+
 /**
  * Used to authenticate a {@link com.pusher.client.channel.PrivateChannel
  * private} or {@link com.pusher.client.channel.PresenceChannel presence}
@@ -110,7 +112,7 @@ public class HttpAuthorizer implements Authorizer {
             defaultHeaders.putAll(mHeaders);
             // Add in the Content-Length, so it can't be overwritten by mHeaders
             defaultHeaders.put("Content-Length","" + Integer.toString(body.getBytes().length));
-            
+
             for (final String headerName : defaultHeaders.keySet()) {
                 final String headerValue = defaultHeaders.get(headerName);
                 connection.setRequestProperty(headerName, headerValue);
@@ -125,7 +127,7 @@ public class HttpAuthorizer implements Authorizer {
             wr.close();
 
             // Read response
-            final InputStream is = connection.getInputStream();
+            final InputStream is = getResponseInputStream(connection);
             final BufferedReader rd = new BufferedReader(new InputStreamReader(is));
             String line;
             final StringBuffer response = new StringBuffer();
@@ -145,5 +147,12 @@ public class HttpAuthorizer implements Authorizer {
         catch (final IOException e) {
             throw new AuthorizationFailureException(e);
         }
+    }
+
+    private InputStream getResponseInputStream(HttpURLConnection connection) throws IOException {
+        if (connection.getResponseCode() >= HTTP_BAD_REQUEST) {
+            return connection.getErrorStream();
+        }
+        return connection.getInputStream();
     }
 }

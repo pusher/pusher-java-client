@@ -50,6 +50,7 @@ dependencies {
 	testCompile "org.mockito:mockito-all:1.8.5"
 	testCompile "org.powermock:powermock-module-junit4:1.4.11"
 	testCompile "org.powermock:powermock-api-mockito:1.4.11"
+	testImplementation "org.mock-server:mockserver-netty:5.10.0"
 
 	testImplementation "com.google.truth:truth:1.0.1"
 }
