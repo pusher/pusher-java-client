@@ -10,9 +10,6 @@ import com.pusher.client.connection.Connection;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 
-/**
- * Created by jamiepatel on 09/06/2016.
- */
 public interface Client {
     Connection getConnection();
     void connect();

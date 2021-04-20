@@ -1,7 +1,6 @@
 package com.pusher.client.channel.impl;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.Before;
@@ -216,7 +215,6 @@ public class PrivateChannelImplTest extends ChannelImplTest {
 
     @Override
     protected ChannelEventListener getEventListener() {
-        final PrivateChannelEventListener listener = mock(PrivateChannelEventListener.class);
-        return listener;
+        return mock(PrivateChannelEventListener.class);
     }
 }

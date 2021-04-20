@@ -20,9 +20,9 @@ public class PusherEventTest {
 
     @Before
     public void setUp() {
-        GsonBuilder gsonBldr = new GsonBuilder();
-        gsonBldr.registerTypeAdapter(PusherEvent.class, new PusherEventDeserializer());
-        GSON = gsonBldr.create();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(PusherEvent.class, new PusherEventDeserializer());
+        GSON = gsonBuilder.create();
     }
 
     @Test

@@ -12,6 +12,7 @@ import java.net.Proxy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PusherOptionsTest {
@@ -28,7 +29,7 @@ public class PusherOptionsTest {
 
     @Test
     public void testEncryptedInitializedAsTrue() {
-        assert pusherOptions.isEncrypted();
+        assert pusherOptions.isUseTLS();
     }
 
     @Test
@@ -49,14 +50,14 @@ public class PusherOptionsTest {
 
     @Test
     public void testEncryptedCanBeSetToTrue() {
-        pusherOptions.setEncrypted(true);
-        assertSame(true, pusherOptions.isEncrypted());
+        pusherOptions.setUseTLS(true);
+        assertTrue(pusherOptions.isUseTLS());
     }
 
     @Test
     public void testUseTLSCanBeSetToTrue() {
         pusherOptions.setUseTLS(true);
-        assertSame(true, pusherOptions.isUseTLS());
+        assertTrue(pusherOptions.isUseTLS());
     }
 
     @Test
@@ -66,7 +67,7 @@ public class PusherOptionsTest {
 
     @Test
     public void testSetEncryptedReturnsSelf() {
-        assertSame(pusherOptions, pusherOptions.setEncrypted(true));
+        assertSame(pusherOptions, pusherOptions.setUseTLS(true));
     }
 
     @Test

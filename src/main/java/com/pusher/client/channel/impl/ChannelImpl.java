@@ -24,9 +24,9 @@ public class ChannelImpl implements InternalChannel {
     private final Object lock = new Object();
 
     public ChannelImpl(final String channelName, final Factory factory) {
-        GsonBuilder gsonBldr = new GsonBuilder();
-        gsonBldr.registerTypeAdapter(PusherEvent.class, new PusherEventDeserializer());
-        GSON = gsonBldr.create();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(PusherEvent.class, new PusherEventDeserializer());
+        GSON = gsonBuilder.create();
         if (channelName == null) {
             throw new IllegalArgumentException("Cannot subscribe to a channel with a null name");
         }

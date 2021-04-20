@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 buildscript {
 	repositories {
 		mavenCentral()
@@ -7,19 +9,19 @@ buildscript {
 	}
 }
 
+plugins {
+	id "java"
+	id "maven"
+	id "signing"
+	id "jacoco"
+}
+
 def getProperty = { property ->
 	if (!project.hasProperty(property)) {
 		throw new GradleException("${property} property must be set")
 	}
 	return project.property(property)
 }
-
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
-apply plugin: 'org.ajoberstar.github-pages'
-apply plugin: 'signing'
-apply plugin: 'jacoco'
 
 group = "com.pusher"
 version = "2.2.6"
@@ -56,7 +58,7 @@ dependencies {
 
 
 processResources {
-	filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+	filter(ReplaceTokens, tokens: [
 		version: project.version
 	] )
 }
@@ -90,39 +92,26 @@ task fatJar(type: Jar, dependsOn:configurations.runtime) {
 	manifest = project.manifest {
 		from sharedManifest
 	}
-	baseName = project.name + '-with-dependencies'
+	archiveBaseName.set(project.name + '-with-dependencies')
 	from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
 	with jar
-	classifier = 'jar-with-dependencies'
+	archiveClassifier.set('jar-with-dependencies')
 }
 assemble.dependsOn fatJar
 
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = 'sources'
+	archiveClassifier.set('sources')
 	from sourceSets.main.allSource
 }
 assemble.dependsOn sourcesJar
 
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-	classifier = 'javadoc'
+	archiveClassifier.set('javadoc')
 	from javadoc.destinationDir
 }
 assemble.dependsOn javadocJar
-
-
-githubPages {
-	repoUri = 'https://github.com/pusher/pusher-websocket-java.git'
-	pages {
-		from javadoc.outputs.files
-	}
-	commitMessage = "JavaDoc gh-pages for ${version}"
-	credentials {
-		username = { getProperty("github.username") }
-		password = { getProperty("github.password") }
-	}
-}
 
 
 signing {
@@ -188,10 +177,6 @@ task createPublishTarget {
 			}
 		}}}
 	}
-}
-
-wrapper {
-	gradleVersion = '5.5.1'
 }
 
 jacoco {

@@ -35,7 +35,6 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
     /* PrivateChannel implementation */
 
     @Override
-    @SuppressWarnings("rawtypes")
     public void trigger(final String eventName, final String data) {
 
         if (eventName == null || !eventName.startsWith(CLIENT_EVENT_PREFIX)) {
@@ -75,7 +74,7 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
     @Override
     public void bind(final String eventName, final SubscriptionEventListener listener) {
 
-        if (listener instanceof PrivateChannelEventListener == false) {
+        if (!(listener instanceof PrivateChannelEventListener)) {
             throw new IllegalArgumentException(
                     "Only instances of PrivateChannelEventListener can be bound to a private channel");
         }
@@ -106,8 +105,7 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
 
             jsonObject.put("data", dataMap);
 
-            final String json = GSON.toJson(jsonObject);
-            return json;
+            return GSON.toJson(jsonObject);
         }
         catch (final Exception e) {
             throw new AuthorizationFailureException("Unable to parse response from Authorizer: " + authResponse, e);

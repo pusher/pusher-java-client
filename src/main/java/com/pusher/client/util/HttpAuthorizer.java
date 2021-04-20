@@ -109,7 +109,7 @@ public class HttpAuthorizer implements Authorizer {
             // Add in the user defined headers
             defaultHeaders.putAll(mHeaders);
             // Add in the Content-Length, so it can't be overwritten by mHeaders
-            defaultHeaders.put("Content-Length","" + Integer.toString(body.getBytes().length));
+            defaultHeaders.put("Content-Length","" + body.getBytes().length);
             
             for (final String headerName : defaultHeaders.keySet()) {
                 final String headerValue = defaultHeaders.get(headerName);

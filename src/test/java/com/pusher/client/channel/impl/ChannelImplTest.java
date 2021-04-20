@@ -35,7 +35,7 @@ public class ChannelImplTest {
     public void setUp() {
         doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
+            public Object answer(InvocationOnMock invocation) {
                 final Runnable r = (Runnable) invocation.getArguments()[0];
                 r.run();
                 return null;
@@ -242,7 +242,6 @@ public class ChannelImplTest {
      * to use the appropriate listener subclass.
      */
     protected ChannelEventListener getEventListener() {
-        final ChannelEventListener listener = mock(ChannelEventListener.class);
-        return listener;
+        return mock(ChannelEventListener.class);
     }
 }
